@@ -1,26 +1,38 @@
 # sshhole-lab
 
-An SSH hole lab for learning and experimentation. Read the [original publication](https://sshhole.com/).
+Authentication bypass in OpenSSH on musl-based systems (Alpine Linux, OpenWrt). Accounts with `*` password hashes accept 257+ character passwords.
 
-![sshole](./images/sshhole.png)
-
-## Run the lab
-
-Start the vulnerable SSH server in a local container:
+## Setup
 
 ```bash
-docker run --rm -it -p 2222:22 ghcr.io/leonjza/sshhole-lab:latest
+pip3 install -r requirements.txt
 ```
 
-In another terminal, connect to the container:
+## Run Test Container
 
 ```bash
-ssh \
-    -o StrictHostKeyChecking=no \
-    -o PreferredAuthentications=password \
-    -o PubkeyAuthentication=no \
-    -p 2222 alpine@localhost
+docker run --rm -p 2222:22 ghcr.io/leonjza/sshhole-lab:latest
 ```
 
-When prompted, enter a password longer than 256 characters twice.
+Or build locally:
 
+```bash
+docker build -t sshole-test .
+docker run --rm -p 2222:22 sshole-test
+```
+
+## Test Single Target
+
+```bash
+python3 sshhole_tester.py --host <target>
+```
+
+## Test Multiple Targets
+- newline-separated file containing target hosts
+```bash
+python3 sshhole_tester.py --targets targets.txt
+```
+
+## Reference
+
+https://sshhole.com/
